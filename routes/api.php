@@ -8,8 +8,9 @@ use App\Http\Controllers\MapelController;
 use App\Http\Controllers\JenisPerangkatController;
 use App\Http\Controllers\UserController;
 
-// SSO Login (forwards to Absensi backend)
+// Local Login and Register
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
 Route::post('/sso/verify', [AuthController::class, 'verifySso']);
 
 // Protected routes: require Sanctum token

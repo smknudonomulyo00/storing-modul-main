@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import SSOCallback from './pages/SSOCallback';
 import DashboardGuru from './pages/DashboardGuru';
 import DashboardAdmin from './pages/DashboardAdmin';
@@ -86,6 +87,16 @@ export default function App() {
             authService.isLoggedIn() 
               ? <Navigate to={role === 'admin' ? '/admin' : '/guru'} replace /> 
               : <LoginPage onLoginSuccess={handleLoginSuccess} />
+          } 
+        />
+
+        {/* Register Route (public) */}
+        <Route 
+          path="/register-storing" 
+          element={
+            authService.isLoggedIn() 
+              ? <Navigate to={role === 'admin' ? '/admin' : '/guru'} replace /> 
+              : <RegisterPage onLoginSuccess={handleLoginSuccess} />
           } 
         />
 
