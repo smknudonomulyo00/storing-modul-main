@@ -121,15 +121,6 @@ export default function UploadModal({ isOpen, editData = null, onClose, onUpload
   const validateAndSetFile = (selectedFile) => {
     if (!selectedFile) return;
     
-    const isPDF = selectedFile.type === 'application/pdf' || selectedFile.name.toLowerCase().endsWith('.pdf');
-    const isDoc = selectedFile.type === 'application/msword' || selectedFile.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || selectedFile.name.toLowerCase().endsWith('.doc') || selectedFile.name.toLowerCase().endsWith('.docx');
-
-    if (!isPDF && !isDoc) {
-      setError('Hanya berkas format PDF atau Word (.doc, .docx) yang diperbolehkan.');
-      setFile(null);
-      return;
-    }
-
     if (selectedFile.size > 10 * 1024 * 1024) { // 10MB Limit
       setError('Ukuran berkas melebihi batas maksimal 10 MB.');
       setFile(null);
@@ -471,7 +462,7 @@ export default function UploadModal({ isOpen, editData = null, onClose, onUpload
               <input
                 ref={fileInputRef}
                 type="file"
-                accept=".pdf,.doc,.docx"
+                accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
                 onChange={handleFileChange}
                 disabled={loading || success}
                 className="hidden"
@@ -505,9 +496,9 @@ export default function UploadModal({ isOpen, editData = null, onClose, onUpload
                   </div>
                   <div>
                     <p className="text-xs font-semibold text-slate-700">
-                      {isEdit ? 'Klik untuk memilih file PDF baru (Opsional)' : 'Tarik & lepas file Anda di sini, atau klik untuk mencari'}
+                      {isEdit ? 'Klik untuk memilih file baru (Opsional)' : 'Tarik & lepas file Anda di sini, atau klik untuk mencari'}
                     </p>
-                    <p className="text-[10px] text-slate-400 mt-1">Hanya menerima format PDF (maks. 10MB)</p>
+                    <p className="text-[10px] text-slate-400 mt-1">Maksimal 10 MB</p>
                   </div>
                 </div>
               )}

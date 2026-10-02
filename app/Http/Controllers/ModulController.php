@@ -54,7 +54,7 @@ class ModulController extends Controller
             'judul' => 'required|string|max:255',
             'mapel_id' => 'required|exists:mapels,id',
             'jenis_perangkat' => 'required|string|max:100',
-            'file_pdf' => 'required|mimes:pdf,doc,docx,xls,xlsx|max:10240',
+            'file_pdf' => 'required|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx|max:10240',
             'tahun_ajaran' => 'nullable|string|max:20',
             'kelas' => 'nullable|string|max:10',
             'jurusan' => 'nullable|string|max:50',
