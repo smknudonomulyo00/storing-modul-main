@@ -26,6 +26,12 @@ class AuthController extends Controller
             ], 401);
         }
 
+        if ($localUser->role !== 'admin' && $localUser->role !== 'pengawas' && !$localUser->is_approved) {
+            return response()->json([
+                'message' => 'Akun Anda belum disetujui oleh Admin. Silakan tunggu.'
+            ], 403);
+        }
+
         // Create local Sanctum token
         $token = $localUser->createToken('auth_token')->plainTextToken;
 
@@ -55,19 +61,17 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => \Illuminate\Support\Facades\Hash::make($request->password),
             'role' => 'guru', // Default role is guru
+            'is_approved' => false,
         ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
-
         return response()->json([
-            'message' => 'Pendaftaran berhasil',
-            'access_token' => $token,
-            'token_type' => 'Bearer',
+            'message' => 'Pendaftaran berhasil. Silakan tunggu persetujuan Admin.',
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
                 'role' => $user->role,
+                'is_approved' => $user->is_approved,
             ]
         ], 201);
     }

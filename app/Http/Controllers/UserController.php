@@ -8,32 +8,35 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    /**
-     * Mengambil semua user (admin, guru) yang mendaftar via portal Storing Modul
-     */
     public function index()
     {
-        $users = User::where('app_source', 'storing')
-            ->where('id', '!=', auth()->id() ?? 0)
+        $users = User::where('id', '!=', auth()->id() ?? 0)
             ->orderBy('created_at', 'desc')
-            ->get(['id', 'name', 'email', 'role', 'status', 'app_source', 'nrg', 'created_at']);
+            ->get(['id', 'name', 'email', 'role', 'is_approved', 'created_at'])
+            ->map(function ($user) {
+                $user->status = $user->is_approved ? 'active' : 'pending';
+                return $user;
+            });
 
         return response()->json([
-            'message' => 'Berhasil mengambil daftar akun Storing Modul.',
+            'message' => 'Berhasil mengambil daftar akun.',
             'data' => $users
         ], 200);
     }
 
     /**
-     * Daftar akun guru yang mendaftar via portal Arsip Perangkat Pembelajaran
-     * dan statusnya pending (kompatibilitas backward).
+     * Daftar akun guru yang belum diapprove
      */
     public function pendingUsers()
     {
-        $users = User::where('app_source', 'storing')
-            ->where('status', 'pending')
+        $users = User::where('is_approved', false)
+            ->where('role', 'guru')
             ->orderBy('created_at', 'desc')
-            ->get(['id', 'name', 'email', 'role', 'status', 'app_source', 'nrg', 'created_at']);
+            ->get(['id', 'name', 'email', 'role', 'is_approved', 'created_at'])
+            ->map(function ($user) {
+                $user->status = 'pending';
+                return $user;
+            });
 
         return response()->json([
             'message' => 'Berhasil mengambil daftar akun pending.',
@@ -42,12 +45,12 @@ class UserController extends Controller
     }
 
     /**
-     * Approve akun guru (ubah status jadi active).
+     * Approve akun guru (ubah is_approved jadi true).
      */
     public function approve($id)
     {
         $user = User::findOrFail($id);
-        $user->status = 'active';
+        $user->is_approved = true;
         $user->save();
 
         return response()->json([
@@ -71,8 +74,9 @@ class UserController extends Controller
             return response()->json(['message' => 'Status akun Admin tidak dapat diubah.'], 403);
         }
 
-        $user->status = $request->status;
+        $user->is_approved = ($request->status === 'active');
         $user->save();
+        $user->status = $user->is_approved ? 'active' : 'pending';
 
         return response()->json([
             'message' => 'Status user berhasil diperbarui',

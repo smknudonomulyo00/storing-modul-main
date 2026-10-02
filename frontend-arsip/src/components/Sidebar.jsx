@@ -41,7 +41,7 @@ export default function Sidebar({ role, user, onUploadClick }) {
           isActive: location.pathname.startsWith('/admin/master-data') || location.pathname.startsWith('/admin/kelola-master')
         },
         { 
-          name: 'Kelola Akun', 
+          name: 'Manajemen Akun', 
           path: '/admin/kelola-akun', 
           icon: UserCheck,
           isActive: location.pathname.startsWith('/admin/kelola-akun')
