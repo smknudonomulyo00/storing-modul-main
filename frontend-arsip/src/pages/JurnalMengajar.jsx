@@ -493,7 +493,7 @@ export default function JurnalMengajar({ user }) {
           </tbody>
         </table>
 
-<table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }} border="1">
+<table className="grid" style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }} border="1">
   <colgroup>
     <col style={{ width: '4%' }} />   {/* No */}
     <col style={{ width: '14%' }} />  {/* Hari, Tanggal */}
@@ -531,20 +531,54 @@ export default function JurnalMengajar({ user }) {
   </thead>
   
   <tbody>
-    <tr>
-      {/* Pastikan jumlah <td> di sini pas 11 buah agar sejajar dengan colgroup */}
-      <td style={{ textAlign: 'center' }}>1.</td>
-      <td>Sabtu, 31 Oktober 2026</td>
-      <td style={{ textAlign: 'center' }}>1</td>
-      <td style={{ textAlign: 'center' }}>5-7</td>
-      <td>Self Introduction</td>
-      <td>Siswa memahami self intro...</td>
-      <td></td> {/* S */}
-      <td></td> {/* I */}
-      <td></td> {/* A */}
-      <td></td> {/* T */}
-      <td style={{ textAlign: 'center' }}>-</td>
-    </tr>
+    {filtered.length > 0 ? (
+      <>
+        {filtered.map((r, i) => (
+          <tr key={r.id}>
+            <td style={{ textAlign: 'center' }}>{i + 1}.</td>
+            <td>{formatHariTanggal(r.tanggal)}</td>
+            <td style={{ textAlign: 'center' }}>{r.pertemuan_ke || ''}</td>
+            <td style={{ textAlign: 'center' }}>{r.jam_ke || ''}</td>
+            <td>{r.materi}</td>
+            <td style={{ whiteSpace: 'pre-wrap' }}>{r.uraian_kegiatan || ''}</td>
+            <td style={{ textAlign: 'center' }}>{r.sakit || ''}</td>
+            <td style={{ textAlign: 'center' }}>{r.izin || ''}</td>
+            <td style={{ textAlign: 'center' }}>{r.alpha || ''}</td>
+            <td style={{ textAlign: 'center' }}>{r.terlambat || ''}</td>
+            <td style={{ textAlign: 'center', whiteSpace: 'pre-wrap' }}>{r.keterangan || ''}</td>
+          </tr>
+        ))}
+        {Array.from({ length: padRows }).map((_, i) => (
+          <tr key={`pad-${i}`}>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+        ))}
+      </>
+    ) : (
+      <tr>
+        <td style={{ textAlign: 'center' }}>1.</td>
+        <td>Sabtu, 31 Oktober 2026</td>
+        <td style={{ textAlign: 'center' }}>1</td>
+        <td style={{ textAlign: 'center' }}>5-7</td>
+        <td>Self Introduction</td>
+        <td>Siswa memahami self intro...</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td style={{ textAlign: 'center' }}>-</td>
+      </tr>
+    )}
   </tbody>
 </table>
 
