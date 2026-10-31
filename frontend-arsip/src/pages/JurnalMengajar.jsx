@@ -123,17 +123,35 @@ export default function JurnalMengajar({ user }) {
 
   // ===== Data header cetak =====
   const printMapel = filterMapel
-    ? mapels.find((m) => String(m.id) === filterMapel)?.nama_mapel
+    ? mapels.find((m) => String(m.id) === String(filterMapel))?.nama_mapel
     : uniq(filtered.map((r) => r.mapel?.nama_mapel)).join(', ');
   const printKelas = filterKelas || uniq(filtered.map((r) => r.kelas)).join(', ');
   const printJurusan = filterJurusan || uniq(filtered.map((r) => r.jurusan)).join(', ');
   const printTA = uniq(filtered.map((r) => r.tahun_ajaran)).join(', ') || tahunAjaran;
   const printSemester = uniq(filtered.map((r) => r.semester)).join(', ') || semesterFromDate(new Date());
-  const padRows = Math.max(0, MIN_PRINT_ROWS - filtered.length);
+
+  // Target total baris agar pas tepat 1 halaman A4 Landscape tanpa tumpah ke halaman 2
+  const TOTAL_PRINT_ROWS = 14;
+  const padRows = Math.max(0, TOTAL_PRINT_ROWS - filtered.length);
 
   const handlePrint = () => {
-    if (!filtered.length) return alert('Tidak ada data jurnal untuk dicetak.');
+    if (!filtered.length) return alert('Tidak ada data jurnal untuk dicetak. Silakan pilih filter atau isi jurnal terlebih dahulu.');
+
+    const originalTitle = document.title;
+    const mapelName = printMapel || 'Semua Mapel';
+    const kelasPart = printKelas ? `Kelas ${printKelas}` : '';
+    const jurusanPart = printJurusan || '';
+    const details = [mapelName, kelasPart, jurusanPart].filter(Boolean).join(' - ');
+
+    // Set judul halaman agar saat "Save as PDF", nama file otomatis:
+    // "Jurnal Mengajar - [Mapel] - Kelas [X] - [Jurusan]"
+    document.title = `Jurnal Mengajar - ${details}`;
+
     window.print();
+
+    setTimeout(() => {
+      document.title = originalTitle;
+    }, 1200);
   };
 
   return (
@@ -141,20 +159,64 @@ export default function JurnalMengajar({ user }) {
       <style>{`
         #jurnal-print { display: none; }
         @media print {
-          @page { size: A4 landscape; margin: 10mm 12mm; }
+          @page {
+            size: A4 landscape;
+            margin: 6mm 10mm 6mm 10mm;
+          }
           body * { visibility: hidden !important; }
           #jurnal-print, #jurnal-print * { visibility: visible !important; }
-          #jurnal-print { display: block !important; position: absolute; left: 0; top: 0; width: 100%; }
-          html, body { background: #fff !important; }
+          #jurnal-print {
+            display: block !important;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            page-break-after: avoid;
+            page-break-inside: avoid;
+          }
+          html, body {
+            background: #fff !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
         }
-        .jp { font-family: 'Times New Roman', serif; color: #000; font-size: 11pt; }
-        .jp table.grid { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        .jp table.grid th, .jp table.grid td { border: 1px solid #000; padding: 3px 5px; vertical-align: top; word-wrap: break-word; }
-        .jp table.grid th { text-align: center; vertical-align: middle; font-weight: bold; }
-        .jp table.grid tr { page-break-inside: avoid; }
-        .jp table.grid td.c { text-align: center; }
-        .jp table.grid tbody tr td { height: 20px; }
-        .jp thead { display: table-header-group; }
+        .jp {
+          font-family: 'Times New Roman', Times, serif;
+          color: #000;
+          font-size: 10pt;
+          line-height: 1.2;
+        }
+        .jp table.grid {
+          width: 100%;
+          border-collapse: collapse;
+          table-layout: fixed;
+        }
+        .jp table.grid th, .jp table.grid td {
+          border: 1px solid #000;
+          padding: 3px 4px;
+          vertical-align: middle;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          word-break: break-word;
+        }
+        .jp table.grid th {
+          text-align: center;
+          font-weight: bold;
+          font-size: 9.5pt;
+          background-color: #fff;
+        }
+        .jp table.grid td {
+          font-size: 9.5pt;
+        }
+        .jp table.grid td.c {
+          text-align: center;
+        }
+        .jp table.grid tbody tr {
+          height: 23px;
+        }
+        .jp thead {
+          display: table-header-group;
+        }
       `}</style>
 
       {/* Header */}
@@ -168,7 +230,7 @@ export default function JurnalMengajar({ user }) {
             <p className="text-xs text-slate-500">Catat kegiatan pembelajaran harian — Tahun Ajaran <b>{tahunAjaran || '...'}</b></p>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button onClick={openNew} id="btn-tambah-jurnal"
             className="px-4 py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-600/20 flex items-center gap-2 cursor-pointer transition-all hover:scale-[1.02]">
             <Plus className="w-4 h-4" /> Isi Jurnal
@@ -178,6 +240,11 @@ export default function JurnalMengajar({ user }) {
             <Printer className="w-4 h-4" /> Cetak Jurnal Pembelajaran
           </button>
         </div>
+      </div>
+
+      {/* Notifikasi info tips print */}
+      <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-xs flex items-center gap-2">
+        <span>💡 <b>Tips Cetak:</b> Pada jendela print browser (Ctrl+P), hilangkan centang <b>"Header and footers" / "Header dan footer"</b> agar tanggal, jam, dan URL sistem tidak tercetak di tepi kertas.</span>
       </div>
 
       {toast && (
@@ -310,7 +377,9 @@ export default function JurnalMengajar({ user }) {
             <select id="filter-mapel" value={filterMapel} onChange={(e) => setFilterMapel(e.target.value)}
               className="px-3 py-2 rounded-xl border border-slate-200 text-xs bg-slate-50 cursor-pointer">
               <option value="">Semua Mapel</option>
-              {mapels.filter((m) => records.some((r) => r.mapel_id === m.id)).map((m) => <option key={m.id} value={m.id}>{m.nama_mapel}</option>)}
+              {mapels.map((m) => (
+                <option key={m.id} value={String(m.id)}>{m.nama_mapel}</option>
+              ))}
             </select>
             <select id="filter-kelas" value={filterKelas} onChange={(e) => setFilterKelas(e.target.value)}
               className="px-3 py-2 rounded-xl border border-slate-200 text-xs bg-slate-50 cursor-pointer">
@@ -322,6 +391,15 @@ export default function JurnalMengajar({ user }) {
               <option value="">Semua Jurusan</option>
               {JURUSAN_OPTIONS.map((j) => <option key={j} value={j}>{j}</option>)}
             </select>
+            {(filterMapel || filterKelas || filterJurusan) && (
+              <button
+                type="button"
+                onClick={() => { setFilterMapel(''); setFilterKelas(''); setFilterJurusan(''); }}
+                className="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
+              >
+                Reset Filter
+              </button>
+            )}
           </div>
         </div>
 
@@ -371,68 +449,106 @@ export default function JurnalMengajar({ user }) {
         </div>
       </div>
 
-      {/* ================= PRINT AREA (A4 Landscape) ================= */}
+      {/* ================= PRINT AREA (A4 Landscape - 1 HALAMAN PAS) ================= */}
       <div id="jurnal-print" className="jp">
-        <div style={{ textAlign: 'center', borderBottom: '2px solid #000', paddingBottom: 4, marginBottom: 10 }}>
-          <div style={{ fontSize: '12pt', fontWeight: 'bold' }}>JURNAL MENGAJAR GURU</div>
-          <div style={{ fontSize: '13pt', fontWeight: 'bold' }}>SMK NAHDLATUL ULAMA DONOMULYO</div>
+        {/* Kop Surat dengan Logo SMK NU */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '14px', marginBottom: '6px' }}>
+          <img
+            src="/IMG_03611.png"
+            alt="Logo SMK NU"
+            style={{ height: '40px', width: 'auto', objectFit: 'contain' }}
+          />
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '11pt', fontWeight: 'bold', letterSpacing: '0.5px', lineHeight: '1.2' }}>
+              JURNAL MENGAJAR GURU
+            </div>
+            <div style={{ fontSize: '13pt', fontWeight: 'bold', letterSpacing: '0.5px', lineHeight: '1.2' }}>
+              SMK NAHDLATUL ULAMA DONOMULYO
+            </div>
+          </div>
         </div>
 
-        <table style={{ width: '100%', marginBottom: 8, fontWeight: 'bold', fontSize: '10.5pt' }}>
+        <div style={{ borderBottom: '2.5px solid #000', marginBottom: '8px' }} />
+
+        {/* Informasi Jurnal */}
+        <table style={{ width: '100%', marginBottom: '8px', fontWeight: 'bold', fontSize: '10pt', borderCollapse: 'collapse' }}>
           <tbody>
             <tr>
-              <td style={{ width: '14%' }}>Nama Guru</td><td style={{ width: '36%' }}>: {user?.name}</td>
-              <td style={{ width: '20%' }}>Kelas / Jurusan</td><td>: {printKelas} / {printJurusan}</td>
+              <td style={{ width: '15%', padding: '1px 0' }}>Nama Guru</td>
+              <td style={{ width: '37%', padding: '1px 0' }}>: {user?.name || '-'}</td>
+              <td style={{ width: '20%', padding: '1px 0' }}>Kelas / Jurusan</td>
+              <td style={{ width: '28%', padding: '1px 0' }}>: {printKelas ? `Kelas ${printKelas}` : '-'} / {printJurusan || '-'}</td>
             </tr>
             <tr>
-              <td>Mata Pelajaran</td><td>: {printMapel}</td>
-              <td>Tahun Ajaran / Semester</td><td>: {printTA} / {printSemester}</td>
+              <td style={{ padding: '1px 0' }}>Mata Pelajaran</td>
+              <td style={{ padding: '1px 0' }}>: {printMapel || '-'}</td>
+              <td style={{ padding: '1px 0' }}>Tahun Ajaran / Semester</td>
+              <td style={{ padding: '1px 0' }}>: {printTA || '-'} / {printSemester || '-'}</td>
             </tr>
           </tbody>
         </table>
 
+        {/* Tabel Utama: Presisi 11 Kolom Sejajar */}
         <table className="grid">
-          <colgroup>
-            <col style={{ width: '4%' }} /><col style={{ width: '14%' }} /><col style={{ width: '5%' }} /><col style={{ width: '5%' }} />
-            <col style={{ width: '17%' }} /><col style={{ width: '27%' }} />
-            <col style={{ width: '3%' }} /><col style={{ width: '3%' }} /><col style={{ width: '3%' }} /><col style={{ width: '3%' }} />
-            <col style={{ width: '16%' }} />
-          </colgroup>
           <thead>
             <tr>
-              <th rowSpan={2}>No</th><th rowSpan={2}>Hari, Tanggal</th><th rowSpan={2}>Ptm Ke-</th><th rowSpan={2}>Jam Ke-</th>
-              <th rowSpan={2}>Materi / Tugas</th><th rowSpan={2}>Uraian Kegiatan</th><th colSpan={4}>Kehadiran</th><th rowSpan={2}>Keterangan</th>
+              <th rowSpan={2} style={{ width: '3.5%' }}>No</th>
+              <th rowSpan={2} style={{ width: '14%' }}>Hari, Tanggal</th>
+              <th rowSpan={2} style={{ width: '5%' }}>Ptm<br/>Ke-</th>
+              <th rowSpan={2} style={{ width: '5%' }}>Jam<br/>Ke-</th>
+              <th rowSpan={2} style={{ width: '18%' }}>Materi / Tugas</th>
+              <th rowSpan={2} style={{ width: '26.5%' }}>Uraian Kegiatan</th>
+              <th colSpan={4} style={{ width: '14%' }}>Kehadiran</th>
+              <th rowSpan={2} style={{ width: '14%' }}>Keterangan</th>
             </tr>
-            <tr><th>S</th><th>I</th><th>A</th><th>T</th></tr>
+            <tr>
+              <th style={{ width: '3.5%' }}>S</th>
+              <th style={{ width: '3.5%' }}>I</th>
+              <th style={{ width: '3.5%' }}>A</th>
+              <th style={{ width: '3.5%' }}>T</th>
+            </tr>
           </thead>
           <tbody>
             {filtered.map((r, i) => (
               <tr key={r.id}>
                 <td className="c">{i + 1}.</td>
-                <td>{formatHariTanggal(r.tanggal)}</td>
-                <td className="c">{r.pertemuan_ke}</td>
-                <td className="c">{r.jam_ke}</td>
-                <td>{r.materi}</td>
-                <td style={{ whiteSpace: 'pre-wrap' }}>{r.uraian_kegiatan}</td>
-                <td className="c">{r.sakit || ''}</td>
-                <td className="c">{r.izin || ''}</td>
-                <td className="c">{r.alpha || ''}</td>
-                <td className="c">{r.terlambat || ''}</td>
-                <td style={{ whiteSpace: 'pre-wrap' }}>{r.keterangan}</td>
+                <td style={{ verticalAlign: 'top' }}>{formatHariTanggal(r.tanggal)}</td>
+                <td className="c" style={{ verticalAlign: 'top' }}>{r.pertemuan_ke || ''}</td>
+                <td className="c" style={{ verticalAlign: 'top' }}>{r.jam_ke || ''}</td>
+                <td style={{ verticalAlign: 'top' }}>{r.materi}</td>
+                <td style={{ verticalAlign: 'top', whiteSpace: 'pre-wrap' }}>{r.uraian_kegiatan || ''}</td>
+                <td className="c" style={{ verticalAlign: 'top' }}>{r.sakit || ''}</td>
+                <td className="c" style={{ verticalAlign: 'top' }}>{r.izin || ''}</td>
+                <td className="c" style={{ verticalAlign: 'top' }}>{r.alpha || ''}</td>
+                <td className="c" style={{ verticalAlign: 'top' }}>{r.terlambat || ''}</td>
+                <td style={{ verticalAlign: 'top', whiteSpace: 'pre-wrap' }}>{r.keterangan || ''}</td>
               </tr>
             ))}
             {Array.from({ length: padRows }).map((_, i) => (
-              <tr key={`pad-${i}`}>{Array.from({ length: 11 }).map((__, j) => <td key={j}>&nbsp;</td>)}</tr>
+              <tr key={`pad-${i}`}>
+                <td className="c">&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              </tr>
             ))}
           </tbody>
         </table>
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16, pageBreakInside: 'avoid' }}>
-          <div style={{ textAlign: 'left', minWidth: 220 }}>
+        {/* Tanda Tangan: Pas di Bagian Kanan Bawah Halaman Pertama */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '12px', pageBreakInside: 'avoid' }}>
+          <div style={{ textAlign: 'left', minWidth: '210px', fontSize: '10pt', lineHeight: '1.3' }}>
             <div>Malang, {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
             <div>Guru Mata Pelajaran</div>
-            <div style={{ height: 60 }} />
-            <div style={{ fontWeight: 'bold', textDecoration: 'underline' }}>{user?.name}</div>
+            <div style={{ height: '45px' }} />
+            <div style={{ fontWeight: 'bold', textDecoration: 'underline' }}>{user?.name || '................................'}</div>
           </div>
         </div>
       </div>
