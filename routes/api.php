@@ -68,4 +68,12 @@ Route::middleware('auth:sanctum')->group(function () {
     // API Pengaturan
     Route::get('/settings/tahun-ajaran', [App\Http\Controllers\SettingController::class, 'getActiveTahunAjaran']);
     Route::put('/settings/tahun-ajaran', [App\Http\Controllers\SettingController::class, 'updateActiveTahunAjaran']);
+
+    // API Jurnal Mengajar (Guru - data milik sendiri)
+    Route::get('/jurnal-mengajar', [App\Http\Controllers\JurnalMengajarController::class, 'index']);
+    Route::post('/jurnal-mengajar', [App\Http\Controllers\JurnalMengajarController::class, 'store']);
+    Route::put('/jurnal-mengajar/{id}', [App\Http\Controllers\JurnalMengajarController::class, 'update']);
+    Route::post('/jurnal-mengajar/{id}/update', [App\Http\Controllers\JurnalMengajarController::class, 'update']);
+    Route::delete('/jurnal-mengajar/{id}', [App\Http\Controllers\JurnalMengajarController::class, 'destroy']);
+    Route::post('/jurnal-mengajar/{id}/delete', [App\Http\Controllers\JurnalMengajarController::class, 'destroy']);
 });

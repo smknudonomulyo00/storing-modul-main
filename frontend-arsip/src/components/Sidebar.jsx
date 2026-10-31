@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BookOpen, LayoutDashboard, FileText, UploadCloud, Users, Layers, UserCheck } from 'lucide-react';
+import { BookOpen, LayoutDashboard, FileText, UploadCloud, Users, Layers, UserCheck, NotebookPen } from 'lucide-react';
 
 export default function Sidebar({ role, user, onUploadClick }) {
   const location = useLocation();
@@ -19,6 +19,12 @@ export default function Sidebar({ role, user, onUploadClick }) {
           path: '/guru?tab=list', 
           icon: FileText,
           isActive: location.pathname === '/guru' && location.search.includes('tab=list')
+        },
+        { 
+          name: 'Jurnal Mengajar', 
+          path: '/guru/jurnal', 
+          icon: NotebookPen,
+          isActive: location.pathname.startsWith('/guru/jurnal')
         },
       ]
     : [

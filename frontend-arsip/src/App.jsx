@@ -8,6 +8,7 @@ import DashboardGuru from './pages/DashboardGuru';
 import DashboardAdmin from './pages/DashboardAdmin';
 import KelolaMasterData from './pages/KelolaMasterData';
 import KelolaAkun from './pages/KelolaAkun';
+import JurnalMengajar from './pages/JurnalMengajar';
 import UploadModal from './components/UploadModal';
 import ReviewModal from './components/ReviewModal';
 import { authService } from './services/api';
@@ -121,6 +122,23 @@ export default function App() {
                   refreshTrigger={refreshTrigger}
                   onOpenReview={handleOpenReview}
                 />
+              </Layout>
+            </RoleProtectedRoute>
+          } 
+        />
+
+        {/* Guru Jurnal Mengajar Route */}
+        <Route 
+          path="/guru/jurnal" 
+          element={
+            <RoleProtectedRoute allowedRoles={['guru']} currentRole={role}>
+              <Layout 
+                role={role} 
+                user={user}
+                onUploadClick={handleOpenNewUpload}
+                onLogout={handleLogout}
+              >
+                <JurnalMengajar user={user} />
               </Layout>
             </RoleProtectedRoute>
           } 

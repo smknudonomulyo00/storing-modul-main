@@ -236,3 +236,25 @@ export const settingsService = {
     return response.data;
   }
 };
+
+// =============================================
+// JURNAL MENGAJAR SERVICES (Guru)
+// =============================================
+export const jurnalService = {
+  getMyJurnal: async (params = {}) => {
+    const response = await API.get('/jurnal-mengajar', { params });
+    return response.data.data;
+  },
+  createJurnal: async (data) => {
+    const response = await API.post('/jurnal-mengajar', data);
+    return response.data;
+  },
+  updateJurnal: async (id, data) => {
+    const response = await API.post(`/jurnal-mengajar/${id}/update`, data);
+    return response.data;
+  },
+  deleteJurnal: async (id) => {
+    const response = await API.post(`/jurnal-mengajar/${id}/delete`);
+    return response.data;
+  }
+};
