@@ -493,72 +493,60 @@ export default function JurnalMengajar({ user }) {
           </tbody>
         </table>
 
-        {/* Tabel Utama: Presisi 11 Kolom Sejajar dengan colgroup */}
-        <table className="grid">
-          <colgroup>
-            <col style={{ width: '4%' }} />
-            <col style={{ width: '14%' }} />
-            <col style={{ width: '5%' }} />
-            <col style={{ width: '5%' }} />
-            <col style={{ width: '18%' }} />
-            <col style={{ width: '26%' }} />
-            <col style={{ width: '3.5%' }} />
-            <col style={{ width: '3.5%' }} />
-            <col style={{ width: '3.5%' }} />
-            <col style={{ width: '3.5%' }} />
-            <col style={{ width: '14%' }} />
-          </colgroup>
-          <thead>
-            <tr>
-              <th rowSpan={2}>No</th>
-              <th rowSpan={2}>Hari, Tanggal</th>
-              <th rowSpan={2}>Ptm<br/>Ke-</th>
-              <th rowSpan={2}>Jam<br/>Ke-</th>
-              <th rowSpan={2}>Materi / Tugas</th>
-              <th rowSpan={2}>Uraian Kegiatan</th>
-              <th colSpan={4}>Kehadiran</th>
-              <th rowSpan={2}>Keterangan</th>
-            </tr>
-            <tr>
-              <th>S</th>
-              <th>I</th>
-              <th>A</th>
-              <th>T</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((r, i) => (
-              <tr key={r.id}>
-                <td className="c">{i + 1}.</td>
-                <td style={{ verticalAlign: 'top' }}>{formatHariTanggal(r.tanggal)}</td>
-                <td className="c" style={{ verticalAlign: 'top' }}>{r.pertemuan_ke || ''}</td>
-                <td className="c" style={{ verticalAlign: 'top' }}>{r.jam_ke || ''}</td>
-                <td style={{ verticalAlign: 'top' }}>{r.materi}</td>
-                <td style={{ verticalAlign: 'top', whiteSpace: 'pre-wrap' }}>{r.uraian_kegiatan || ''}</td>
-                <td className="c" style={{ verticalAlign: 'top' }}>{r.sakit || ''}</td>
-                <td className="c" style={{ verticalAlign: 'top' }}>{r.izin || ''}</td>
-                <td className="c" style={{ verticalAlign: 'top' }}>{r.alpha || ''}</td>
-                <td className="c" style={{ verticalAlign: 'top' }}>{r.terlambat || ''}</td>
-                <td style={{ verticalAlign: 'top', whiteSpace: 'pre-wrap' }}>{r.keterangan || ''}</td>
-              </tr>
-            ))}
-            {Array.from({ length: padRows }).map((_, i) => (
-              <tr key={`pad-${i}`}>
-                <td className="c">&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+<table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }} border="1">
+  <colgroup>
+    <col style={{ width: '4%' }} />   {/* No */}
+    <col style={{ width: '14%' }} />  {/* Hari, Tanggal */}
+    <col style={{ width: '5%' }} />   {/* Ptm Ke- */}
+    <col style={{ width: '5%' }} />   {/* Jam Ke- */}
+    <col style={{ width: '18%' }} />  {/* Materi / Tugas */}
+    <col style={{ width: '26%' }} />  {/* Uraian Kegiatan */}
+    <col style={{ width: '3.5%' }} /> {/* S */}
+    <col style={{ width: '3.5%' }} /> {/* I */}
+    <col style={{ width: '3.5%' }} /> {/* A */}
+    <col style={{ width: '3.5%' }} /> {/* T */}
+    <col style={{ width: '14%' }} />  {/* Keterangan */}
+  </colgroup>
+  
+  <thead>
+    <tr>
+      {/* Kolom yang turun 2 baris menggunakan rowSpan={2} */}
+      <th rowSpan={2}>No</th>
+      <th rowSpan={2}>Hari, Tanggal</th>
+      <th rowSpan={2}>Ptm Ke-</th>
+      <th rowSpan={2}>Jam Ke-</th>
+      <th rowSpan={2}>Materi / Tugas</th>
+      <th rowSpan={2}>Uraian Kegiatan</th>
+      {/* Kolom kehadiran memakan 4 kolom ke samping menggunakan colSpan={4} */}
+      <th colSpan={4}>Kehadiran</th>
+      <th rowSpan={2}>Keterangan</th>
+    </tr>
+    <tr>
+      {/* Baris kedua khusus untuk anak dari kolom Kehadiran */}
+      <th>S</th>
+      <th>I</th>
+      <th>A</th>
+      <th>T</th>
+    </tr>
+  </thead>
+  
+  <tbody>
+    <tr>
+      {/* Pastikan jumlah <td> di sini pas 11 buah agar sejajar dengan colgroup */}
+      <td style={{ textAlign: 'center' }}>1.</td>
+      <td>Sabtu, 31 Oktober 2026</td>
+      <td style={{ textAlign: 'center' }}>1</td>
+      <td style={{ textAlign: 'center' }}>5-7</td>
+      <td>Self Introduction</td>
+      <td>Siswa memahami self intro...</td>
+      <td></td> {/* S */}
+      <td></td> {/* I */}
+      <td></td> {/* A */}
+      <td></td> {/* T */}
+      <td style={{ textAlign: 'center' }}>-</td>
+    </tr>
+  </tbody>
+</table>
 
         {/* Tanda Tangan: Pas di Bagian Kanan Bawah Halaman Pertama */}
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '12px', pageBreakInside: 'avoid' }}>
