@@ -193,6 +193,7 @@ export default function JurnalMengajar({ user }) {
           width: 100%;
           border-collapse: collapse;
           table-layout: fixed;
+          margin: 0 auto;
         }
         .jp table.grid th, .jp table.grid td {
           border: 1px solid #000;
@@ -201,6 +202,7 @@ export default function JurnalMengajar({ user }) {
           word-wrap: break-word;
           overflow-wrap: break-word;
           word-break: break-word;
+          box-sizing: border-box;
         }
         .jp table.grid th {
           text-align: center;
@@ -491,24 +493,37 @@ export default function JurnalMengajar({ user }) {
           </tbody>
         </table>
 
-        {/* Tabel Utama: Presisi 11 Kolom Sejajar */}
+        {/* Tabel Utama: Presisi 11 Kolom Sejajar dengan colgroup */}
         <table className="grid">
+          <colgroup>
+            <col style={{ width: '4%' }} />
+            <col style={{ width: '14%' }} />
+            <col style={{ width: '5%' }} />
+            <col style={{ width: '5%' }} />
+            <col style={{ width: '18%' }} />
+            <col style={{ width: '26%' }} />
+            <col style={{ width: '3.5%' }} />
+            <col style={{ width: '3.5%' }} />
+            <col style={{ width: '3.5%' }} />
+            <col style={{ width: '3.5%' }} />
+            <col style={{ width: '14%' }} />
+          </colgroup>
           <thead>
             <tr>
-              <th rowSpan={2} style={{ width: '3.5%' }}>No</th>
-              <th rowSpan={2} style={{ width: '14%' }}>Hari, Tanggal</th>
-              <th rowSpan={2} style={{ width: '5%' }}>Ptm<br/>Ke-</th>
-              <th rowSpan={2} style={{ width: '5%' }}>Jam<br/>Ke-</th>
-              <th rowSpan={2} style={{ width: '18%' }}>Materi / Tugas</th>
-              <th rowSpan={2} style={{ width: '26.5%' }}>Uraian Kegiatan</th>
-              <th colSpan={4} style={{ width: '14%' }}>Kehadiran</th>
-              <th rowSpan={2} style={{ width: '14%' }}>Keterangan</th>
+              <th rowSpan={2}>No</th>
+              <th rowSpan={2}>Hari, Tanggal</th>
+              <th rowSpan={2}>Ptm<br/>Ke-</th>
+              <th rowSpan={2}>Jam<br/>Ke-</th>
+              <th rowSpan={2}>Materi / Tugas</th>
+              <th rowSpan={2}>Uraian Kegiatan</th>
+              <th colSpan={4}>Kehadiran</th>
+              <th rowSpan={2}>Keterangan</th>
             </tr>
             <tr>
-              <th style={{ width: '3.5%' }}>S</th>
-              <th style={{ width: '3.5%' }}>I</th>
-              <th style={{ width: '3.5%' }}>A</th>
-              <th style={{ width: '3.5%' }}>T</th>
+              <th>S</th>
+              <th>I</th>
+              <th>A</th>
+              <th>T</th>
             </tr>
           </thead>
           <tbody>
