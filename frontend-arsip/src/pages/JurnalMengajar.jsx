@@ -61,11 +61,14 @@ export default function JurnalMengajar({ user }) {
     loadRecords();
   }, []);
 
-  const filtered = useMemo(() => records.filter((r) =>
-    (!filterMapel || String(r.mapel_id) === filterMapel) &&
-    (!filterKelas || r.kelas === filterKelas) &&
-    (!filterJurusan || r.jurusan === filterJurusan)
-  ), [records, filterMapel, filterKelas, filterJurusan]);
+  const filtered = useMemo(() => records.filter((r) => {
+    const matchMapel = !filterMapel ||
+      String(r.mapel_id) === String(filterMapel) ||
+      (r.mapel && String(r.mapel.id) === String(filterMapel));
+    const matchKelas = !filterKelas || String(r.kelas) === String(filterKelas);
+    const matchJurusan = !filterJurusan || String(r.jurusan).toLowerCase() === String(filterJurusan).toLowerCase();
+    return matchMapel && matchKelas && matchJurusan;
+  }), [records, filterMapel, filterKelas, filterJurusan]);
 
   const setField = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 

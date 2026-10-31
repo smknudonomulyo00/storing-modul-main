@@ -12,6 +12,8 @@ class Mapel extends Model
         'jurusan',
     ];
 
+    protected $keyType = 'string';
+
     protected $casts = [
         'id' => 'string',
     ];
