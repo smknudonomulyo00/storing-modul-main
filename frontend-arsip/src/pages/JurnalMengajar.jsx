@@ -189,22 +189,21 @@ export default function JurnalMengajar({ user }) {
           font-size: 10pt;
           line-height: 1.2;
         }
-        .jp table.grid {
+        .jp table.print-table {
           width: 100%;
           border-collapse: collapse;
           table-layout: fixed;
           margin: 0 auto;
         }
-        .jp table.grid th, .jp table.grid td {
+        .jp table.print-table th, .jp table.print-table td {
           border: 1px solid #000;
           padding: 3px 4px;
           vertical-align: middle;
           word-wrap: break-word;
           overflow-wrap: break-word;
-          word-break: break-word;
           box-sizing: border-box;
         }
-        .jp table.grid th {
+        .jp table.print-table th {
           text-align: center;
           font-weight: bold;
           font-size: 9.5pt;
@@ -493,7 +492,7 @@ export default function JurnalMengajar({ user }) {
           </tbody>
         </table>
 
-<table className="grid" style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }} border="1">
+<table className="print-table" style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }} border="1">
   <colgroup>
     <col style={{ width: '4%' }} />   {/* No */}
     <col style={{ width: '14%' }} />  {/* Hari, Tanggal */}
@@ -539,13 +538,19 @@ export default function JurnalMengajar({ user }) {
             <td>{formatHariTanggal(r.tanggal)}</td>
             <td style={{ textAlign: 'center' }}>{r.pertemuan_ke || ''}</td>
             <td style={{ textAlign: 'center' }}>{r.jam_ke || ''}</td>
-            <td>{r.materi}</td>
-            <td style={{ whiteSpace: 'pre-wrap' }}>{r.uraian_kegiatan || ''}</td>
+            <td style={{ wordWrap: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal' }}>
+              {r.materi}
+            </td>
+            <td style={{ wordWrap: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal' }}>
+              {r.uraian_kegiatan || ''}
+            </td>
             <td style={{ textAlign: 'center' }}>{r.sakit || ''}</td>
             <td style={{ textAlign: 'center' }}>{r.izin || ''}</td>
             <td style={{ textAlign: 'center' }}>{r.alpha || ''}</td>
             <td style={{ textAlign: 'center' }}>{r.terlambat || ''}</td>
-            <td style={{ textAlign: 'center', whiteSpace: 'pre-wrap' }}>{r.keterangan || ''}</td>
+            <td style={{ textAlign: 'center', wordWrap: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal' }}>
+              {r.keterangan || '-'}
+            </td>
           </tr>
         ))}
         {Array.from({ length: padRows }).map((_, i) => (
@@ -570,12 +575,16 @@ export default function JurnalMengajar({ user }) {
         <td>Sabtu, 31 Oktober 2026</td>
         <td style={{ textAlign: 'center' }}>1</td>
         <td style={{ textAlign: 'center' }}>5-7</td>
-        <td>Self Introduction</td>
-        <td>Siswa memahami self intro...</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td style={{ wordWrap: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal' }}>
+          Self Introduction
+        </td>
+        <td style={{ wordWrap: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal' }}>
+          Siswa memahami self intro dan dapat memperkenalkan dirinya dengan lancar dan baik tanpa melihat teks.
+        </td>
+        <td style={{ textAlign: 'center' }}></td>
+        <td style={{ textAlign: 'center' }}></td>
+        <td style={{ textAlign: 'center' }}></td>
+        <td style={{ textAlign: 'center' }}></td>
         <td style={{ textAlign: 'center' }}>-</td>
       </tr>
     )}
